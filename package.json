@@ -1,0 +1,26 @@
+{
+  "name": "babplus_menu_bot",
+  "version": "1.0.0",
+  "description": "밥플러스 점심 메뉴 알림 봇",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "author": "wooook",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.4",
+    "cheerio": "^1.0.0-rc.10",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "node-cron": "^3.0.0",
+    "node-schedule-tz": "^1.2.1-4",
+    "nodemon": "^2.0.14",
+    "request-promise-native": "^1.0.9",
+    "slack-node": "^0.1.8"
+  },
+  "devDependencies": {
+    "serverless": "^2.64.1"
+  }
+}

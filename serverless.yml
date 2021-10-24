@@ -1,0 +1,17 @@
+service: babplus-menu-bot
+useDotenv: true
+frameworkVersion: "2"
+provider:
+  region: ap-northeast-2
+  name: aws
+  runtime: nodejs12.x
+  environment:
+    S3_URI: ${env:S3_URI}
+    WEBHOOK_URI: ${env:WEBHOOK_URI}
+functions:
+  slack:
+    handler: app.handler
+    events:
+      - http:
+          path: slack/events
+          method: get
