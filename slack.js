@@ -33,14 +33,8 @@ const randomEmoji = () => {
   return emojis[number];
 };
 
-const getThumbnail = () => {
-  const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-  const index = getRandom(numbers.length);
-  return `${process.env.S3_URI}/ghibli_${numbers[index]}.gif`;
-};
-
 const crawling = async () => {
-  let result = [];
+  let manuImageUrl = "";
   const url =
     "https://blog.naver.com/PostView.naver?blogId=babplus123&logNo=222378669083&redirect=Dlog&widgetTypeCall=true&directAccess=false";
   await request(url, (err, res, body) => {
@@ -48,55 +42,28 @@ const crawling = async () => {
       return;
     }
     const $ = cheerio.load(body);
-    let colArr = $(".post-view");
-    const text1 =
-      colArr[0].children[4].children[0].children[0].children[0].children[0]
-        .children[0].data;
-    if (text1) {
-      result.push(text1);
-    }
-    for (let i = 5; i < 12; i++) {
-      const text = colArr[0].children[i].children[0].children[0].data;
-      if (text) {
-        result.push(text);
-      }
-    }
+    const colArr = $(".post-view");
+    manuImageUrl = colArr[0].children[3].children[0].attribs["data-lazy-src"];
   });
-  return result;
+  return manuImageUrl;
 };
 
 const postMenu = async () => {
   const emoji = randomEmoji();
-  const menus = await crawling();
-  const thumbnailUrl = getThumbnail();
-  let menuText = "";
-  console.log(":::menus:::", menus);
-
-  for (let i = 0; i < menus.length; i++) {
-    if (menus[i]) {
-      menuText = menuText + `\n ${menus[i]}`;
-    }
-  }
-
-  if (menus.length < 8) {
-    menuText =
-      menuText +
-      `\n 메뉴 정보를 모두 가저오지 못했습니다 😣 \n 아래의 인스타그랩 또는 블로그를 확인 해주세요.`;
-  }
+  const manuImageUrl = await crawling();
 
   slack.webhook(
     {
       text: `${emoji} 오늘 밥플러스 메뉴`,
       attachments: [
         {
-          color: "939597",
-          fields: [
+          blocks: [
             {
-              title: ``,
-              value: `${menuText}`,
+              type: "image",
+              image_url: manuImageUrl,
+              alt_text: "inspiration",
             },
           ],
-          thumb_url: thumbnailUrl,
         },
         {
           footer:
